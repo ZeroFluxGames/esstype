@@ -1,0 +1,210 @@
+<nav id="rail">
+  <div class="logo" title="ESSTYPE"></div>
+  <button class="rb on" data-view="all" data-tip="Tüm notlar"><i data-i="notes"></i></button>
+  <button class="rb" data-view="fav" data-tip="Favoriler"><i data-i="star"></i></button>
+  <button class="rb" data-view="decks" data-tip="Sunumlar"><i data-i="slides"></i></button>
+  <button class="rb" data-view="books" data-tip="Defterler"><i data-i="books"></i></button>
+  <button class="rb" data-view="trash" data-tip="Çöp kutusu"><i data-i="trash"></i><span class="badge hide" id="trashBadge"></span></button>
+  <button class="rb" id="railTpl" data-tip="Şablonlar"><i data-i="template"></i></button>
+  <span class="sp"></span>
+  <button class="rb" id="railCmd" data-tip="Komut paleti (Ctrl+K)"><i data-i="command"></i></button>
+  <button class="rb" id="railTheme" data-tip="Arayüz modu"><i data-i="palette"></i></button>
+  <button class="rb" id="railSettings" data-tip="Ayarlar ve yedek"><i data-i="settings"></i></button>
+  <button class="rb" id="railHelp" data-tip="Kısayollar (F1)"><i data-i="help"></i></button>
+</nav>
+
+<aside id="side">
+  <div class="side-head"><div class="brandname"><span class="bmark"></span>ESS<b>TYPE</b></div><div class="side-sub" id="today"></div></div>
+  <div class="newrow">
+    <button class="newbtn" id="newBtn"><i data-i="plus"></i> Yeni sayfa</button>
+    <button class="tplbtn" id="deckBtn" data-tip="Yeni sunum"><i data-i="slides"></i></button>
+    <button class="tplbtn" id="tplBtn" data-tip="Şablondan"><i data-i="template"></i></button>
+  </div>
+  <div class="searchbox"><i data-i="search"></i><input id="search" placeholder="Notlarda ara…"></div>
+  <div class="side-title"><h2 id="viewTitle">Tüm notlar</h2>
+    <button class="ib" id="emptyTrash" data-tip="Çöpü boşalt" style="display:none"><i data-i="trash"></i></button>
+  </div>
+  <div class="books hide" id="books"></div>
+  <div class="sortrow"><span id="count"></span><span class="sp"></span>
+    <select id="sort"><option value="updated">Son düzenlenen</option><option value="created">Oluşturma</option><option value="title">Başlık (A-Z)</option></select>
+  </div>
+  <div id="list"></div>
+  <div class="side-foot"><span id="storeTxt">depolama</span><span class="bar"><i id="storeBar" style="width:2%"></i></span></div>
+</aside>
+
+<div id="main">
+  <header id="top">
+    <button class="ib" id="sideBtn" data-tip="Kenar çubuğu (Ctrl+\)"><i data-i="sidebar"></i></button>
+    <div class="crumb"><span class="bkname" id="bkBtn"><i></i><span></span></span><span>/</span><span class="nt" id="crumbT"></span></div>
+    <span class="savest" id="savest"><i></i><span>kaydedildi</span></span>
+    <button class="ib" id="favBtn" data-tip="Favori"><i data-i="star"></i></button>
+    <button class="ib" id="pinBtn" data-tip="Sabitle"><i data-i="pin"></i></button>
+    <button class="ib" id="olBtn" data-tip="Anahat / geçmiş / bilgi"><i data-i="panel"></i></button>
+    <button class="btn" id="showBtn"><i data-i="play"></i> Sunum</button>
+    <button class="btn pri" id="expBtn"><i data-i="export"></i> Çıktı al</button>
+    <button class="ib" id="moreBtn"><i data-i="more"></i></button>
+  </header>
+
+  <section id="ribbon">
+    <div class="tabs">
+      <button class="tab on" data-tab="home">Giriş</button>
+      <button class="tab" data-tab="insert">Ekle</button>
+      <button class="tab" data-tab="design">Kağıt & Sayfa</button>
+      <button class="tab" data-tab="view">Görünüm</button>
+      
+      <span class="sp"></span><span class="hint">ipucu: satır başında <b>/</b> yaz</span>
+    </div>
+
+    <div class="panel on" data-panel="home">
+      <div class="g">
+        <button class="tb" data-cmd="undo" data-tip="Geri al (Ctrl+Z)"><i data-i="undo"></i></button>
+        <button class="tb" data-cmd="redo" data-tip="Yinele (Ctrl+Y)"><i data-i="redo"></i></button>
+        <button class="tb" id="painterBtn" data-tip="Biçim boyacısı"><i data-i="brush"></i></button>
+        <button class="tb" data-cmd="removeFormat" data-tip="Biçimi temizle"><i data-i="eraser"></i></button>
+      </div>
+      <div class="g">
+        <div class="combo" id="styleCombo" data-tip="Paragraf stili"><span class="v">Normal metin</span><i data-i="chev" class="dd"></i></div>
+        <div class="combo" id="fontCombo" data-tip="Yazı tipi"><span class="v">Lora</span><i data-i="chev" class="dd"></i></div>
+        <div class="sizebox" data-tip="Yazı boyutu"><button id="szDown">−</button><input id="szIn" value="18"><button id="szUp">+</button></div>
+      </div>
+      <div class="g">
+        <button class="tb" data-cmd="bold" data-tip="Kalın (Ctrl+B)"><span class="gl" style="font-weight:700">B</span></button>
+        <button class="tb" data-cmd="italic" data-tip="İtalik (Ctrl+I)"><span class="gl" style="font-style:italic">I</span></button>
+        <button class="tb" data-cmd="underline" data-tip="Altı çizili (Ctrl+U)"><span class="gl" style="text-decoration:underline">U</span></button>
+        <button class="tb" data-cmd="strikeThrough" data-tip="Üstü çizili"><span class="gl" style="text-decoration:line-through">S</span></button>
+        <button class="tb" id="caseBtn" data-tip="Harf düzeni, üst/alt simge"><span class="gl" style="font-size:14px;width:auto">Aa</span><i data-i="chev" class="dd"></i></button>
+      </div>
+      <div class="g">
+        <button class="tb col-btn" id="foreBtn" data-tip="Yazı rengi"><span class="gl" style="font-size:15px">A</span><span class="sw" id="foreSw"></span></button>
+        <button class="tb col-btn" id="backBtn" data-tip="Vurgulayıcı"><i data-i="marker" style="width:16px;height:16px"></i><span class="sw" id="backSw"></span></button>
+        <button class="tb" id="fxBtn" data-tip="Yazı efektleri"><i data-i="sparkle"></i><i data-i="chev" class="dd"></i></button>
+      </div>
+      <div class="g">
+        <button class="tb" id="alignBtn" data-tip="Hizalama"><i data-i="aleft"></i><i data-i="chev" class="dd"></i></button>
+              <button class="tb" data-cmd="insertUnorderedList" data-tip="Madde işaretli liste"><i data-i="ul"></i></button>
+        <button class="tb" data-cmd="insertOrderedList" data-tip="Numaralı liste"><i data-i="ol"></i></button>
+        <button class="tb" id="chkBtn" data-tip="Yapılacaklar listesi"><i data-i="check"></i></button>
+        <button class="tb" data-cmd="outdent" data-tip="Girintiyi azalt"><i data-i="outdent"></i></button>
+        <button class="tb" data-cmd="indent" data-tip="Girintiyi artır"><i data-i="indent"></i></button>
+      </div>
+    </div>
+
+    <div class="panel" data-panel="insert">
+      <div class="g">
+        <button class="tb big" id="insImg"><i data-i="image"></i>Görsel</button>
+        <button class="tb big" id="insDraw"><i data-i="pen"></i>Çizim</button>
+        <button class="tb big" id="insSticky"><i data-i="sticky"></i>Yapışkan not</button>
+        <button class="tb big" id="insText"><i data-i="textbox"></i>Metin kutusu</button>
+        <button class="tb big" id="insShape"><i data-i="shapes"></i>Şekil</button>
+      </div>
+      <div class="g">
+        <button class="tb big" id="insTable"><i data-i="table"></i>Tablo</button>
+        <button class="tb big" id="insCallout"><i data-i="callout"></i>Bilgi kutusu</button>
+        <button class="tb big" id="insCode"><i data-i="code"></i>Kod</button>
+        <button class="tb big" id="insToggle"><i data-i="toggle"></i>Açılır bölüm</button>
+      </div>
+      <div class="g">
+        <button class="tb big" id="insLink"><i data-i="link"></i>Bağlantı</button>
+        <button class="tb big" id="insSym"><i data-i="smile"></i>Simge</button>
+        <button class="tb big" id="insDate"><i data-i="calendar"></i>Tarih</button>
+        <button class="tb big" id="insHr"><i data-i="hr"></i>Ayırıcı</button>
+        
+      </div>
+      <div class="g">
+        <button class="tb big" id="insMic"><i data-i="mic"></i>Sesle yaz</button>
+      </div>
+    </div>
+
+    <div class="panel" data-panel="design">
+      <div class="g">
+        <button class="tb big" id="dzPaper"><i data-i="paper"></i>Kağıt türü</button>
+        <button class="tb big" id="dzTone"><i data-i="drop"></i>Kağıt rengi</button>
+        <button class="tb big" id="dzSize"><i data-i="page"></i>Sayfa boyutu</button>
+        <button class="tb big" id="dzLh"><i data-i="lh"></i>Satır aralığı</button>
+      </div>
+      <div class="g">
+        <button class="tb big" id="dzMargin"><i data-i="margin"></i>Kenar çizgisi</button>
+        <button class="tb big" id="dzHoles"><i data-i="holes"></i>Spiral delik</button>
+      </div>
+      <div class="g">
+        <button class="tb big" id="dzTitleFont"><i data-i="heading"></i>Başlık yazısı</button>
+        <button class="tb big" id="dzBodyFont"><i data-i="type"></i>Metin yazısı</button>
+      </div>
+      <div class="g">
+        <button class="tb big" id="dzDefault"><i data-i="pinmark"></i>Varsayılan yap</button>
+      </div>
+    </div>
+
+    <div class="panel" data-panel="view">
+      <div class="g">
+        <button class="tb big" id="vwTheme"><i data-i="palette"></i>Arayüz modu</button>
+        <button class="tb big" id="vwDark"><i data-i="moon"></i>Gece / gündüz</button>
+      </div>
+      <div class="g">
+        <button class="tb big" id="vwFocus"><i data-i="focus"></i>Odak modu</button>
+        <button class="tb big" id="vwPara"><i data-i="para"></i>Paragraf odağı</button>
+        <button class="tb big" id="vwType"><i data-i="typewriter"></i>Daktilo modu</button>
+        <button class="tb big" id="vwFull"><i data-i="expand"></i>Tam ekran</button>
+      </div>
+      <div class="g">
+        <button class="tb big" id="vwOutline"><i data-i="list"></i>Anahat</button>
+        <button class="tb big" id="vwHist"><i data-i="history"></i>Geçmiş</button>
+        <button class="tb big" id="vwFind"><i data-i="replace"></i>Bul / değiştir</button>
+      </div>
+      <div class="g">
+        <button class="tb big" id="vwSpeak"><i data-i="speaker"></i>Sesli oku</button>
+        <button class="tb big" id="vwSpell"><i data-i="spell"></i>Yazım denetimi</button>
+        <button class="tb big" id="vwGoal"><i data-i="target"></i>Kelime hedefi</button>
+        <button class="tb big" id="vwSound"><i data-i="keys"></i>Daktilo sesi</button>
+      </div>
+    </div>
+
+    </section>
+
+  <div id="work">
+    <div id="scroll">
+      <div id="sheetWrap"><div id="sheet">
+        <div id="paper">
+          <div id="pages"></div>
+          <input id="title" placeholder="Başlıksız" spellcheck="false" autocomplete="off">
+          <div id="meta"></div>
+          <div id="ed" contenteditable="true" spellcheck="true"></div>
+          <div id="objs"></div>
+          <div id="selbox"><span class="h nw" data-h="nw"></span><span class="h n" data-h="n"></span><span class="h ne" data-h="ne"></span><span class="h e" data-h="e"></span><span class="h se" data-h="se"></span><span class="h s" data-h="s"></span><span class="h sw" data-h="sw"></span><span class="h w" data-h="w"></span><span class="rot" data-h="rot"></span></div>
+          <div class="sizetip" id="sizetip"></div>
+        </div>
+      </div></div>
+      <div class="ftb" id="objTb"></div>
+      <div class="ftb" id="tblTb"></div>
+      <div class="ftb" id="selTb"></div>
+      <div class="dropzone" id="dropzone">Görseli bırak — serbestçe yerleştirilecek</div>
+    </div>
+    <aside id="rpanel" class="hide">
+      <div class="rp-head"><div class="seg" id="rpTabs"><button data-rp="outline" class="on">Anahat</button><button data-rp="hist">Geçmiş</button><button data-rp="info">Bilgi</button></div><span class="sp"></span><button class="ib" id="rpClose"><i data-i="x"></i></button></div>
+      <div class="rp-body" id="rpBody"></div>
+    </aside>
+  </div>
+
+  <footer id="status">
+    <span id="stPage" class="pgind"></span><span id="stWords">0 kelime</span><span id="stChars"></span><span id="stRead"></span>
+    <span class="goal hide" id="stGoal"><span class="bar"><i></i></span><span></span></span>
+    <span class="sp"></span>
+    <span id="stPaper"></span>
+    <span class="zoom"><button id="zOut">−</button><input type="range" id="zoomR" min="50" max="200" step="10" value="100"><button id="zIn">+</button><span id="zoomV">%100</span></span>
+  </footer>
+  <div id="deckApp" class="hide">
+    <section id="dribbon"></section>
+    <div id="dwork">
+      <aside id="dthumbs"></aside>
+      <div id="dcenter"><div id="dcanvas"><div id="dstagebox"><div id="dstage"></div></div></div>
+        <div id="dnotes"><textarea id="dnotesIn" placeholder="Konuşmacı notlarını eklemek için tıklayın — sadece sunucu görünümünde görünür"></textarea></div></div>
+      <aside id="danimPane" class="hide"><div class="rp-head">Animasyon bölmesi<span class="sp"></span><button class="btn" id="danimPlay" style="height:28px">Oynat</button></div><div id="danimList"></div></aside>
+    </div>
+    <footer id="dstatus"></footer>
+  </div>
+</div>
+
+<div id="toast"></div>
+<input type="file" id="fImg" accept="image/*" multiple hidden>
+<input type="file" id="fJson" accept=".json,.esst" hidden>
+<input type="color" id="fColor" hidden>
