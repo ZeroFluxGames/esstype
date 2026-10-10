@@ -120,7 +120,7 @@ scripts/build.mjs   her şeyi tek HTML dosyasında birleştirir
 windows/            Windows kurulum betiği
 ```
 
-`v*` biçiminde bir etiket gönderildiğinde (`git tag v1.0.0 && git push --tags`) GitHub Actions uygulamayı derler, zip dosyasını Releases sayfasına ekler ve GitHub Pages'te yayınlar.
+Web sürümü `docs/index.html` dosyasından GitHub Pages ile yayınlanır; yeni sürümde `npm run build` sonrası `dist/index.html` dosyasını `docs/` klasörüne kopyalaman yeterli.
 
 ## Katkı
 Hata bildirimleri ve öneriler için [Issues](../../issues). Ayrıntılar: [CONTRIBUTING.md](CONTRIBUTING.md).
