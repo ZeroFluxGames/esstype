@@ -1,11 +1,29 @@
 @echo off
-rem ESSTYPE kurulumu: dosyalari Belgeler\ESSTYPE klasorune kopyalar,
-rem masaustu ve Baslat menusu kisayolu olusturur (Microsoft Edge uygulama penceresi).
+chcp 65001 >nul
+title ESSTYPE Kurulum
 set "SRC=%~dp0"
-set "DST=%USERPROFILE%\Documents\ESSTYPE"
+if not exist "%SRC%esstype.html" (
+  echo [HATA] esstype.html bulunamadi.
+  echo Zip dosyasini once sag tik ^> "Tumunu ayikla" ile klasore cikarin,
+  echo sonra cikan klasordeki ESSTYPE-Kurulum dosyasini calistirin.
+  pause
+  exit /b 1
+)
+for /f "usebackq delims=" %%D in (`powershell -NoProfile -Command "[Environment]::GetFolderPath('MyDocuments')"`) do set "DOCS=%%D"
+if "%DOCS%"=="" set "DOCS=%USERPROFILE%\Documents"
+set "DST=%DOCS%\ESSTYPE"
 if not exist "%DST%" mkdir "%DST%"
 copy /Y "%SRC%esstype.html" "%DST%\esstype.html" >nul
-copy /Y "%SRC%esstype.ico" "%DST%\esstype.ico" >nul
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$q=[char]34; $e='C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'; $a=$env:USERPROFILE+'\Documents\ESSTYPE'; $u='file:///'+($a -replace '\\','/')+'/esstype.html'; $w=New-Object -ComObject WScript.Shell; foreach($p in @(([Environment]::GetFolderPath('Desktop')+'\ESSTYPE.lnk'),([Environment]::GetFolderPath('Programs')+'\ESSTYPE.lnk'))){ $l=$w.CreateShortcut($p); $l.TargetPath=$e; $l.Arguments='--app='+$q+$u+$q+' --start-maximized'; $l.IconLocation=$a+'\esstype.ico,0'; $l.WorkingDirectory=$a; $l.Description='ESSTYPE'; $l.Save() }"
-echo ESSTYPE kuruldu. Masaustundeki ESSTYPE ikonuyla acabilirsin.
-start "" "%USERPROFILE%\Desktop\ESSTYPE.lnk"
+if exist "%SRC%esstype.ico" copy /Y "%SRC%esstype.ico" "%DST%\esstype.ico" >nul
+if not exist "%DST%\esstype.html" (
+  echo [HATA] Dosya kopyalanamadi. Uygulamayi kurulumsuz aciyorum.
+  start "" "%SRC%esstype.html"
+  pause
+  exit /b 1
+)
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$a=$env:DST; $f=Join-Path $a 'esstype.html'; $e=@(\"${env:ProgramFiles(x86)}\Microsoft\Edge\Application\msedge.exe\",\"$env:ProgramFiles\Microsoft\Edge\Application\msedge.exe\") | Where-Object {Test-Path $_} | Select-Object -First 1; $w=New-Object -ComObject WScript.Shell; foreach($d in @([Environment]::GetFolderPath('Desktop'),[Environment]::GetFolderPath('Programs'))){ $l=$w.CreateShortcut((Join-Path $d 'ESSTYPE.lnk')); if($e){ $l.TargetPath=$e; $l.Arguments='--app=\"'+([uri]$f).AbsoluteUri+'\" --start-maximized' } else { $l.TargetPath=$f }; $l.IconLocation=(Join-Path $a 'esstype.ico')+',0'; $l.WorkingDirectory=$a; $l.Save() }"
+echo.
+echo ESSTYPE kuruldu: %DST%
+echo Masaustundeki ESSTYPE kisayoluyla acabilirsiniz.
+start "" "%DST%\esstype.html"
+timeout /t 5 >nul
