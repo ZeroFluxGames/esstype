@@ -1,5 +1,10 @@
 # Değişiklik günlüğü
 
+## 1.0.1 — 2026-10
+
+- **Word çıktısı:** görseller, yapışkan notlar, şekiller ve metin kutuları artık sayfadaki yerinde, döndürmesi ve görünümüyle birlikte aktarılıyor; kenar boşlukları ve satır aralığı uygulamayla eşleşiyor.
+- **Windows kurulumu:** zip içinden çalıştırma uyarısı, farklı Belgeler klasörü desteği, kopyalama başarısız olursa uygulamayı doğrudan açma.
+
 ## 1.0.0 — 2026-10
 
 İlk genel sürüm.
