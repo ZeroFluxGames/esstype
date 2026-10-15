@@ -23023,16 +23023,24 @@ async function exportDOCX(n,O){toast('Word belgesi hazırlanıyor…');const D=d
     const ia=el.tagName==='IMG'?el:null;if(ia){kids.push(new D.Paragraph({alignment:D.AlignmentType.CENTER,children:await runs({childNodes:[ia]},{})}));return}
     kids.push(new D.Paragraph({alignment:align(el)||(el.querySelector('img[data-align="center"]')?D.AlignmentType.CENTER:undefined),children:await runs(el,{})}))}
   if(O.title&&n.title)kids.push(new D.Paragraph({heading:D.HeadingLevel.TITLE,children:[new D.TextRun({text:n.title})]}));
-  // interleave floating objects by y
-  const P=$('paper').getBoundingClientRect(),z=Z();const objs=O.imgs?[...n.objects].sort((a,b)=>a.y-b.y):[];let oi=0;
-  const flushObjs=async y=>{while(oi<objs.length&&objs[oi].y<=y){const o=objs[oi++];
-    if(o.type==='img'){const src=await toPngData(o.src);if(src){const k=Math.min(1,maxW/o.w);kids.push(new D.Paragraph({alignment:D.AlignmentType.CENTER,children:[new D.ImageRun({data:dataBuf(src),transformation:{width:Math.round(o.w*k),height:Math.round(o.h*k)}})]}))}}
-    else if((o.type==='sticky'||o.type==='text'||o.type==='shape')&&o.html){const d=document.createElement('div');d.innerHTML=o.html;const tx=d.innerText.trim();if(tx)kids.push(new D.Paragraph({children:[new D.TextRun({text:tx,font:o.type==='sticky'?'Segoe Print':undefined})],shading:o.type==='sticky'?{type:D.ShadingType.CLEAR,fill:rgbHex(o.color||'#fff3a3'),color:'auto'}:undefined,spacing:{before:120,after:120}}))}}};
-  for(const el of ED().children){const y=(el.getBoundingClientRect().top-P.top)/z;await flushObjs(y);await block(el)}await flushObjs(1e9);
-  const sz={A4:[11906,16838],A5:[8391,11906],Letter:[12240,15840]}[O.page];const mg={narrow:720,normal:1134,wide:1700}[O.margins];
-  const doc=new D.Document({creator:'ESSTYPE',title:n.title,styles:{default:{document:{run:{font:baseFont,size:baseSize}}}},
+  // floating objects: rasterize each as it looks on the page and anchor it (absolute position) to the paragraph it sits on
+  const sz={A4:[11906,16838],A5:[8391,11906],Letter:[12240,15840]}[O.page];const g=pageGeom(n);const S=(sz[0]/15)/g.W;
+  const P=$('paper').getBoundingClientRect(),z=Z();const blocks=[...ED().children];const tops=blocks.map(el=>(el.getBoundingClientRect().top-P.top)/z);
+  const objs=O.imgs?[...n.objects].sort((a,b)=>(a.z||1)-(b.z||1)):[];const byBlock=new Map();
+  for(const o of objs){let i=0;for(let j=0;j<tops.length;j++)if(tops[j]<=o.y)i=j;if(!byBlock.has(i))byBlock.set(i,[]);byBlock.get(i).push(o)}
+  async function objRun(o,top){const el=qs(`.obj[data-id="${o.id}"]`);let src=null;
+    try{const inn=el&&qs('.in',el);if(inn)src=await htmlToImage.toPng(inn,{pixelRatio:2,width:o.w,height:o.h,style:{opacity:String(o.op??1)}})}catch(e){}
+    if(!src&&o.type==='img')src=await toPngData(o.src);if(!src)return null;
+    return new D.ImageRun({data:dataBuf(src),transformation:{width:Math.max(1,Math.round(o.w*S)),height:Math.max(1,Math.round(o.h*S)),rotation:o.rot||undefined,flip:o.flip?{horizontal:true}:undefined},
+      floating:{horizontalPosition:{relative:D.HorizontalPositionRelativeFrom.PAGE,offset:Math.round(o.x*S*9525)},verticalPosition:{relative:D.VerticalPositionRelativeFrom.PARAGRAPH,offset:Math.round((o.y-top)*S*9525)},
+        wrap:{type:D.TextWrappingType.NONE},allowOverlap:true,lockAnchor:true,behindDocument:false,zIndex:o.z||1}})}
+  const anchorPara=async(list,top)=>{const r=[];for(const o of list){const x=await objRun(o,top);if(x)r.push(x)}if(r.length)kids.push(new D.Paragraph({children:r,spacing:{before:0,after:0,line:20,lineRule:D.LineRuleType.EXACT}}))};
+  if(!blocks.length&&objs.length)await anchorPara(objs,0);
+  for(let i=0;i<blocks.length;i++){if(byBlock.has(i))await anchorPara(byBlock.get(i),tops[i]);await block(blocks[i])}
+  const mg={narrow:720,normal:1134,wide:1700}[O.margins];
+  const doc=new D.Document({creator:'ESSTYPE',title:n.title,styles:{default:{document:{run:{font:baseFont,size:baseSize},paragraph:{spacing:{line:Math.round(p.lh*S*15),lineRule:D.LineRuleType.AT_LEAST,before:0,after:0}}}}},
     numbering:{config:[{reference:'num',levels:[0,1,2,3].map(l=>({level:l,format:[D.LevelFormat.DECIMAL,D.LevelFormat.LOWER_LETTER,D.LevelFormat.LOWER_ROMAN,D.LevelFormat.DECIMAL][l],text:`%${l+1}.`,alignment:D.AlignmentType.START,style:{paragraph:{indent:{left:720*(l+1),hanging:360}}}}))}]},
-    sections:[{properties:{page:{size:{width:sz[0],height:sz[1]},margin:{top:mg,bottom:mg,left:mg,right:mg}}},children:kids.length?kids:[new D.Paragraph('')]}]});
+    sections:[{properties:{page:{size:{width:sz[0],height:sz[1]},margin:{top:mg,bottom:mg,left:Math.round((g.PL+g.CUE)/g.W*sz[0]),right:Math.round(g.PR/g.W*sz[0])}}},children:kids.length?kids:[new D.Paragraph('')]}]});
   const blob=await D.Packer.toBlob(doc);download(fname(n)+'.docx',blob);toast('Word belgesi indirildi')}
 /* --- pptx --- */
 async function exportPPTX(){const n=cur();if(!n)return;flushSave();toast('PowerPoint hazırlanıyor…');const d=deckOf(n);const T=(DECKS[d.theme]||DECKS.minimal);const C=T.ppt;
